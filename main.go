@@ -36,11 +36,11 @@ func main() {
 	denomination = "Eth"
 	accountEthBalance, err := getEthBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
 	failOnError(err, "Getting balance")
-	fmt.Printf("Received amount in %v : %v", denomination, accountEthBalance)
+	fmt.Printf("Received amount in %v : %v \n", denomination, accountEthBalance)
 
 	denomination = "wei"
 	accountWeiBalance := getWeiBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
-	fmt.Printf("Received amount in %v : %v", denomination, accountWeiBalance)
+	fmt.Printf("Received amount in %v : %v \n", denomination, accountWeiBalance)
 
 }
 
@@ -63,10 +63,8 @@ func getEthBalance(client *ethclient.Client, hex string) (*big.Float, error) {
 	balance, err := getBalance(client, address)
 	failOnError(err, "Could not getBalance")
 
-	fmt.Println("Raw Balance in wei : ", balance)
 	floatBalance := new(big.Float)
 	floatBalance.SetString(balance.String())
-	fmt.Printf("FloatBalance in ETH : %v \n", floatBalance)
 	balanceEther := new(big.Float).Quo(floatBalance, big.NewFloat(math.Pow10(18)))
 	return balanceEther, nil
 }
@@ -77,6 +75,5 @@ func getWeiBalance(client *ethclient.Client, hex string) *big.Int {
 	balance, err := client.BalanceAt(context.Background(), address, nil)
 	failOnError(err, "Getting BalanceAt")
 	//return as is
-	fmt.Println("Raw Balance in wei : ", balance)
 	return balance
 }
