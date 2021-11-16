@@ -8,15 +8,20 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/bitherhq/go-bither/common"
-	"github.com/bitherhq/go-bither/ethclient"
+	// "github.com/bitherhq/go-bither/common"
+	// "github.com/bitherhq/go-bither/ethclient"
+
+	"github.com/etherbet/wallet"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 var infuraURL = "https://mainnet.infura.io/v3/8c5b190b405041f4afb69b99b46c4070"
 var ganacheURL = "http://127.0.0.1:8545"
 var blockChain = infuraURL
 
-var DataHash = "0xE897bCD4f65642b502bE817a08C37cFFe6B95F28" //temporal
+// var DataHash = "0xE897bCD4f65642b502bE817a08C37cFFe6B95F28" //temporal
+var DataHash = "0x4ad64983349C49dEfE8d7A4686202d24b25D0CE8" //temporal
 
 func failOnError(err error, context string) {
 	if err != nil {
@@ -26,7 +31,8 @@ func failOnError(err error, context string) {
 
 func main() {
 
-	client, err := ethclient.Dial(blockChain)
+	// client, err := ethclient.Dial(blockChain)
+	client, err := ethclient.DialContext(context.Background(), blockChain)
 	failOnError(err, "creating ether client")
 
 	// defer client.Close()
@@ -43,6 +49,9 @@ func main() {
 	denomination = "wei"
 	accountWeiBalance := getWeiBalance(client, DataHash)
 	fmt.Printf("Received amount in %v : %v \n", denomination, accountWeiBalance)
+
+	_, err = wallet.GenPrivatekey()
+	failOnError(err, "Failed generating privatekey")
 
 }
 
