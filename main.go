@@ -16,6 +16,8 @@ var infuraURL = "https://mainnet.infura.io/v3/8c5b190b405041f4afb69b99b46c4070"
 var ganacheURL = "http://127.0.0.1:8545"
 var blockChain = infuraURL
 
+var DataHash = "0xE897bCD4f65642b502bE817a08C37cFFe6B95F28" //temporal
+
 func failOnError(err error, context string) {
 	if err != nil {
 		log.Fatalf("Failed %v with error %v", context, err)
@@ -34,12 +36,12 @@ func main() {
 	var denomination string
 
 	denomination = "Eth"
-	accountEthBalance, err := getEthBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
+	accountEthBalance, err := getEthBalance(client, DataHash)
 	failOnError(err, "Getting balance")
 	fmt.Printf("Received amount in %v : %v \n", denomination, accountEthBalance)
 
 	denomination = "wei"
-	accountWeiBalance := getWeiBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
+	accountWeiBalance := getWeiBalance(client, DataHash)
 	fmt.Printf("Received amount in %v : %v \n", denomination, accountWeiBalance)
 
 }
@@ -57,7 +59,7 @@ func getBalance(client *ethclient.Client, address common.Address) (*big.Int, err
 	return balance, nil
 }
 
-//getEthBalance - takes in client, hex and returns amount on address in given hex in the denomination
+//getEthBalance - takes in client, hex and returns amount on address in given hex in the ETH denomination
 func getEthBalance(client *ethclient.Client, hex string) (*big.Float, error) {
 	address := common.HexToAddress(hex)
 	balance, err := getBalance(client, address)
@@ -69,7 +71,7 @@ func getEthBalance(client *ethclient.Client, hex string) (*big.Float, error) {
 	return balanceEther, nil
 }
 
-//getBalance takes in hex and denomination and returns amount on address in given hex in the denomination
+//getBalance takes in hex and denomination and returns amount on address in given hex in wei denomination
 func getWeiBalance(client *ethclient.Client, hex string) *big.Int {
 	address := common.HexToAddress(hex)
 	balance, err := client.BalanceAt(context.Background(), address, nil)
