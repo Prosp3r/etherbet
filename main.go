@@ -31,44 +31,48 @@ func main() {
 	block, err := client.BlockByNumber(context.Background(), nil)
 	failOnError(err, "Getting BlockByNumber")
 	fmt.Println("Block Number : ", block.Number())
-	// denomination := "eth"
-	denomination := "wei"
+	var denomination string
+
+	denomination = "Eth"
 	accountEthBalance, err := getEthBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
 	failOnError(err, "Getting balance")
-
 	fmt.Printf("Received amount in %v : %v", denomination, accountEthBalance)
 
-
-
-}
-
-
-func getBalance(){
+	denomination = "wei"
+	accountWeiBalance := getWeiBalance(client, "0x737ec93DC736344a8A8EF51C337e052d29F61493")
+	fmt.Printf("Received amount in %v : %v", denomination, accountWeiBalance)
 
 }
 
-//getBalance takes in hex and denomination and returns amount on address in given hex in the denomination
-func getEthBalance(client *ethclient.Client, hex string) (*big.Float, error) {
-	denomination := "eth"
-	address := common.HexToAddress(hex)
+//getBalance - returns balance from blockchain
+func getBalance(client *ethclient.Client, address common.Address) (*big.Int, error) {
 	balance, err := client.BalanceAt(context.Background(), address, nil)
-	failOnError(err, "Getting BalanceAt")
-
-	if denomination == "eth" {
-		//1 eht = 10 ^ 18 wei
-		fmt.Println("Raw Balance in wei : ", balance)
-		floatBalance := new(big.Float)
-		floatBalance.SetString(balance.String())
-		fmt.Printf("FloatBalance in %v : %v \n", denomination, floatBalance)
-		balanceEther := new(big.Float).Quo(floatBalance, big.NewFloat(math.Pow10(18)))
-		return balanceEther, nil
+	// failOnError(err, "Getting BalanceAt")
+	if err != nil {
+		failOnError(err, "Could not get BalancAt")
+		errorMsg := "Could not fetch balance from address"
+		return nil, errors.New(errorMsg)
 	}
-	msg := "Could not get Balance"
-	return nil, errors.New(msg)
+
+	return balance, nil
+}
+
+//getEthBalance - takes in client, hex and returns amount on address in given hex in the denomination
+func getEthBalance(client *ethclient.Client, hex string) (*big.Float, error) {
+	address := common.HexToAddress(hex)
+	balance, err := getBalance(client, address)
+	failOnError(err, "Could not getBalance")
+
+	fmt.Println("Raw Balance in wei : ", balance)
+	floatBalance := new(big.Float)
+	floatBalance.SetString(balance.String())
+	fmt.Printf("FloatBalance in ETH : %v \n", floatBalance)
+	balanceEther := new(big.Float).Quo(floatBalance, big.NewFloat(math.Pow10(18)))
+	return balanceEther, nil
 }
 
 //getBalance takes in hex and denomination and returns amount on address in given hex in the denomination
-func getWeiBalance(client *ethclient.Client, hex, denomination string) *big.Int {
+func getWeiBalance(client *ethclient.Client, hex string) *big.Int {
 	address := common.HexToAddress(hex)
 	balance, err := client.BalanceAt(context.Background(), address, nil)
 	failOnError(err, "Getting BalanceAt")
