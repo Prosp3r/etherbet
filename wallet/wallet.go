@@ -34,10 +34,8 @@ func CreateKeys() map[string]string {
 
 	ppkey["private"] = hexutil.Encode(privateData)
 	ppkey["public"] = hexutil.Encode(publicData)
+	ppkey["address"] = addressString 
 
-	fmt.Printf("Private: %v \n Public: %v \n FirstKey: %v \n", ppkey["private"], ppkey["public"], addressString)
-	addressString2 := GenAddress(publicKey, privateKey)
-	fmt.Println("Second key: ", addressString2)
 	return ppkey
 }
 
