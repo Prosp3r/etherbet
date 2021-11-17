@@ -50,7 +50,7 @@ func main() {
 	accountWeiBalance := getWeiBalance(client, DataHash)
 	fmt.Printf("Received amount in %v : %v \n", denomination, accountWeiBalance)
 
-	_, err = wallet.GenPrivatekey()
+	_, err = wallet.CreateKeys()
 	failOnError(err, "Failed generating privatekey")
 
 }

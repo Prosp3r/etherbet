@@ -3,8 +3,8 @@ package wallet
 import (
 	"crypto/ecdsa"
 	"errors"
-	"fmt"
 	"log"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -16,6 +16,31 @@ func failOnError(err error, context string) {
 	}
 }
 
+func CreateKeys() map[string]string {
+
+	ppkey := make(map[string]string)
+
+	privateKey, err := GenPrivatekey()
+	failOnError(err, "GeneratingPrivateKey")
+
+	privateData := crypto.FromECDSA(privateKey)
+
+	publicKey := GenPublicKey(privateKey)
+
+	publicData := crypto.FromECDSAPub(publicKey)
+	addressString := GenAddress(publicKey, privateKey)
+
+	//fmt.Printf("Public key: %v\n Private Key: %v \n Address: %v", hexutil.Encode(publicData), hexutil.Encode(privateData), addressString)
+
+	ppkey["private"] = hexutil.Encode(privateData)
+	ppkey["public"] = hexutil.Encode(publicData)
+
+	fmt.Printf("Private: %v \n Public: %v \n FirstKey: %v \n", ppkey["private"], ppkey["public"], addressString)
+	addressString2 := GenAddress(publicKey, privateKey)
+	fmt.Println("Second key: ", addressString2)
+	return ppkey
+}
+
 func GenPrivatekey() (*ecdsa.PrivateKey, error) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
@@ -24,16 +49,7 @@ func GenPrivatekey() (*ecdsa.PrivateKey, error) {
 		return nil, errors.New(errorMsg)
 	}
 
-	privateData := crypto.FromECDSA(privateKey)
-
-	publicKey := GenPublicKey(privateKey)
-	publicData := crypto.FromECDSAPub(publicKey)
-	addressString := GenAddress(publicKey, privateKey)
-
-	fmt.Printf("Public key: %v\n Private Key: %v \n Address: %v", hexutil.Encode(publicData), hexutil.Encode(privateData), addressString)
-
-	// return privateKey, nil
-	return nil, nil
+	return privateKey, nil
 
 }
 
