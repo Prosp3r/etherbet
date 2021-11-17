@@ -19,6 +19,7 @@ import (
 var infuraURL = "https://mainnet.infura.io/v3/8c5b190b405041f4afb69b99b46c4070"
 var ganacheURL = "http://127.0.0.1:8545"
 var blockChain = infuraURL
+var Password = "Akomeno123"
 
 // var DataHash = "0xE897bCD4f65642b502bE817a08C37cFFe6B95F28" //temporal
 var DataHash = "0x4ad64983349C49dEfE8d7A4686202d24b25D0CE8" //temporal
@@ -50,9 +51,8 @@ func main() {
 	accountWeiBalance := getWeiBalance(client, DataHash)
 	fmt.Printf("Received amount in %v : %v \n", denomination, accountWeiBalance)
 
-	_ = wallet.CreateKeys()
+	_ = wallet.CreateKeys(Password)
 	failOnError(err, "Failed generating privatekey")
-
 }
 
 //getBalance - returns balance from blockchain

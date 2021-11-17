@@ -4,11 +4,14 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"log"
-	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
+
+var storage = "./wallet/ugodi"
 
 func failOnError(err error, context string) {
 	if err != nil {
@@ -16,25 +19,31 @@ func failOnError(err error, context string) {
 	}
 }
 
-func CreateKeys() map[string]string {
+func CreaeAddress(password string) *accounts.Account {
+	Keyx := keystore.NewKeyStore(storage, keystore.StandardScryptN, keystore.StandardScryptP)
+	Newaddress, err := Keyx.NewAccount(password)
+	failOnError(err, "Failed Creating New account")
+	return &Newaddress
+}
+
+func CreateKeys(password string) map[string]string {
+
+	_ = CreaeAddress(password)
 
 	ppkey := make(map[string]string)
 
 	privateKey, err := GenPrivatekey()
 	failOnError(err, "GeneratingPrivateKey")
-
 	privateData := crypto.FromECDSA(privateKey)
 
 	publicKey := GenPublicKey(privateKey)
-
 	publicData := crypto.FromECDSAPub(publicKey)
-	addressString := GenAddress(publicKey, privateKey)
 
-	//fmt.Printf("Public key: %v\n Private Key: %v \n Address: %v", hexutil.Encode(publicData), hexutil.Encode(privateData), addressString)
+	addressString := GenAddress(publicKey, privateKey)
 
 	ppkey["private"] = hexutil.Encode(privateData)
 	ppkey["public"] = hexutil.Encode(publicData)
-	ppkey["address"] = addressString 
+	ppkey["address"] = addressString
 
 	return ppkey
 }
@@ -46,9 +55,7 @@ func GenPrivatekey() (*ecdsa.PrivateKey, error) {
 		errorMsg := "Failed generating private key"
 		return nil, errors.New(errorMsg)
 	}
-
 	return privateKey, nil
-
 }
 
 func GenPublicKey(privateKey *ecdsa.PrivateKey) *ecdsa.PublicKey {
