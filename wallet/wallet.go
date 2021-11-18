@@ -3,7 +3,10 @@ package wallet
 import (
 	"crypto/ecdsa"
 	"errors"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -12,6 +15,8 @@ import (
 )
 
 var storage = "./wallet/ugodi"
+var walletFiles []string
+var addressDB map[string]string
 
 func failOnError(err error, context string) {
 	if err != nil {
@@ -26,9 +31,28 @@ func CreaeAddress(password string) *accounts.Account {
 	return &Newaddress
 }
 
+func ReadInAddresses() {
+	err := filepath.Walk(storage, func(path string, info os.FileInfo, err error) error {
+		walletFiles = append(walletFiles, path)
+		return nil
+	})
+	failOnError(err, "Reading File names")
+
+	for _, f := range walletFiles {
+		fmt.Println(f)
+	}
+
+	// addys, err := ioutil.ReadFile(storage + "/")
+	// failOnError(err, "Reading  Address Files")
+	// for _, v := range addys {
+	// 	fmt.Println(v)
+	// }
+}
+
 func CreateKeys(password string) map[string]string {
 
 	_ = CreaeAddress(password)
+	ReadInAddresses()
 
 	ppkey := make(map[string]string)
 
