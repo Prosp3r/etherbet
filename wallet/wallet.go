@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -24,7 +25,7 @@ func failOnError(err error, context string) {
 	}
 }
 
-func CreaeAddress(password string) *accounts.Account {
+func CreateAddress(password string) *accounts.Account {
 	Keyx := keystore.NewKeyStore(storage, keystore.StandardScryptN, keystore.StandardScryptP)
 	Newaddress, err := Keyx.NewAccount(password)
 	failOnError(err, "Failed Creating New account")
@@ -40,18 +41,26 @@ func ReadInAddresses() {
 
 	for _, f := range walletFiles {
 		fmt.Println(f)
+		fileName := strings.Split(f, "/")
+		keyName := strings.Split(fileName[2], "--")
+		addressDB[keyName[2]] = fileName[2]
 	}
 
+}
+
+func ReadMyAddress(password, privateKey string) {
 	// addys, err := ioutil.ReadFile(storage + "/")
 	// failOnError(err, "Reading  Address Files")
 	// for _, v := range addys {
 	// 	fmt.Println(v)
 	// }
+
+
 }
 
 func CreateKeys(password string) map[string]string {
 
-	_ = CreaeAddress(password)
+	_ = CreateAddress(password)
 	ReadInAddresses()
 
 	ppkey := make(map[string]string)
