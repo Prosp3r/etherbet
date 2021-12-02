@@ -43,18 +43,21 @@ func ReadInAddresses() {
 		fmt.Println(f)
 		fileName := strings.Split(f, "/")
 		keyName := strings.Split(fileName[2], "--")
-		addressDB[keyName[2]] = fileName[2]
+		if len(keyName) > 2 {
+			fmt.Printf("Keyname[0]: %v \v Keyname[1]: %v \n Keyname[2]: %v\n", keyName[0], keyName[1], keyName[2])
+		}
+		addy := keyName[2]
+		addressDB[addy] = f
 	}
-
+	fmt.Printf("Total in address database : %v\n", len(addressDB))
 }
 
-func ReadMyAddress(password, privateKey string) {
+func ReadMyAddress(password, address string) {
 	// addys, err := ioutil.ReadFile(storage + "/")
 	// failOnError(err, "Reading  Address Files")
 	// for _, v := range addys {
 	// 	fmt.Println(v)
 	// }
-
 
 }
 
